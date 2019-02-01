@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <unordered_map>
+#include <map>
+#include <tuple>
 
 #define blank "█"
 
@@ -82,21 +83,21 @@ char get_next_letter() {
     }
 }
 
-vector<string> process_next_letter(char letter, vector<string> list_of_words, unsigned int word_length) {
+tuple<vector<string>, vector<int>> process_next_letter(char letter, vector<string> list_of_words, unsigned int word_length) {
     vector<string> new_list;
 
     //this is in indexes
-    unordered_map<string, long> positions ={};
+    map<string, long> positions ={};
 
     //generate all possible possitions
 
     for (string& word : list_of_words) {
-        size_t nCharacterOffset = word.find (letter, 0);
         vector<int> char_locations;
-        while (nCharacterOffset != string::npos) {
-            char_locations.push_back(static_cast<int>(nCharacterOffset));
-            size_t nCharSearchOffset = nCharacterOffset + 1;
-            nCharacterOffset = word.find(word, nCharSearchOffset);
+
+        for(size_t i = 0; i < word.size(); ++i) {
+            if (word[i] == letter) {
+                char_locations.push_back(i);
+            }
         }
 
         string char_loc_str = "";
@@ -114,11 +115,44 @@ vector<string> process_next_letter(char letter, vector<string> list_of_words, un
         new_list.push_back(word);
     }
 
+    vector<int> num_of_positions;
+
+    tuple<string, int> max_val = make_tuple("", -1);
     for ( const auto &[key, value]: positions ) {
-        std::cout << key <<":" << value << '\n';
+        if (value > get<1>(max_val)) {
+            max_val = make_tuple(key, value);
+        }
     }
 
-    return(new_list);
+    vector<string> final_list;
+    for (string& word : list_of_words) {
+        vector<int> char_locations;
+
+        for(size_t i = 0; i < word.size(); ++i) {
+            if (word[i] == letter) {
+                char_locations.push_back(i);
+            }
+        }
+
+        string char_loc_str = "";
+        for (int char_loc : char_locations) {
+            char_loc_str.append(to_string(char_loc));
+        }
+
+
+        if (char_loc_str == get<0>(max_val)) {
+            final_list.push_back(word);
+        }
+    }
+
+    string temp = get<0>(max_val);
+    vector<int> final_positions;
+    for (char c : temp) {
+        int x = c - '0';
+        final_positions.push_back(x);
+    }
+//    int* fp = &final_positions[0];
+    return make_tuple(final_list, final_positions);
 }
 
 
@@ -144,10 +178,10 @@ int main() {
         cout << "Number of guesses remaining: " << guesses << endl;
         cout << "Current word: " << current_word << endl;
         char next_letter = get_next_letter();
-        list_of_words = process_next_letter(next_letter, list_of_words, word_length);
+        vector<int> postions;
+        tie(list_of_words, postions) = process_next_letter(next_letter, list_of_words, word_length);
+        
 
-        int i;
-        cin >> i;
 
         guesses--;
     }

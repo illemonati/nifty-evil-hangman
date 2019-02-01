@@ -155,6 +155,14 @@ tuple<vector<string>, vector<int>> process_next_letter(char letter, vector<strin
     return make_tuple(final_list, final_positions);
 }
 
+string change_word(string old_word, vector<int> positions, char letter){
+    string new_word = old_word;
+    for (int i : positions) {
+        new_word[i] = letter;
+    }
+    return new_word;
+}
+
 
 int main() {
     unsigned int word_length = get_word_length();
@@ -167,8 +175,9 @@ int main() {
 //    }
     string current_word = "";
     for (int i = 0; i < word_length; i++) {
-        current_word.append(blank);
-        current_word.append(" ");
+        current_word.append("_");
+
+//        current_word.append(" ");
     }
     while (play_again) {
         if (total_number_of_words_remaining_on) {
@@ -177,11 +186,19 @@ int main() {
         }
         cout << "Number of guesses remaining: " << guesses << endl;
         cout << "Current word: " << current_word << endl;
-        char next_letter = get_next_letter();
-        vector<int> postions;
-        tie(list_of_words, postions) = process_next_letter(next_letter, list_of_words, word_length);
-        
-
+        if (current_word.find('_') == string::npos) {
+            cout << "You won!!\n" << "Word was: " << current_word << endl;
+            break;
+        } else if (guesses > 0) {
+            char next_letter = get_next_letter();
+            vector<int> postions;
+            tie(list_of_words, postions) = process_next_letter(next_letter, list_of_words, word_length);
+            current_word = change_word(current_word, postions, next_letter);
+        } else {
+            current_word = list_of_words[0];
+            cout << "You failed\n" << "Word was: " << current_word << endl;
+            break;
+        }
 
         guesses--;
     }

@@ -105,9 +105,7 @@ tuple<vector<string>, vector<int>> process_next_letter(char letter, vector<strin
             char_loc_str.append(to_string(char_loc));
         }
 
-        if (char_loc_str.length() < 1) {
-            //do nothing
-        } else if (positions.find(char_loc_str) == positions.end()) {
+        if (positions.find(char_loc_str) == positions.end()) {
             positions[char_loc_str] = 1;
         } else {
             positions[char_loc_str] ++;
@@ -163,6 +161,29 @@ string change_word(string old_word, vector<int> positions, char letter){
     return new_word;
 }
 
+void print_letters_guessed(vector<char> letters) {
+    for (char letter : letters) {
+        cout << letter << ", ";
+    }
+    cout << endl;
+}
+
+bool get_play_again() {
+    while (true) {
+        char temp;
+        cout << "Do you want to play again (y/n): " << endl;
+        cin >> temp;
+        if (!(temp == 'y' || temp == 'n')) {
+            cout << "That is not a valid input, please try again!" << endl;
+        } else {
+            if (temp == 'y') {
+                return true;
+            }
+            return false;
+        }
+    }
+}
+
 
 int main() {
     unsigned int word_length = get_word_length();
@@ -170,34 +191,33 @@ int main() {
     bool total_number_of_words_remaining_on = get_total_number_of_words_remaining_on();
     vector<string> list_of_words = get_words_from_txt(word_length);
     bool play_again = true;
-//    for (string& s: list_of_words) {
-//        cout << s << endl;
-//    }
     string current_word = "";
     for (int i = 0; i < word_length; i++) {
-        current_word.append("_");
-
-//        current_word.append(" ");
+        current_word.append("*");
     }
+
+    vector <char> letters_guessed;
     while (play_again) {
         if (total_number_of_words_remaining_on) {
             unsigned long number_of_words_remaining = list_of_words.size();
             cout << "Number of words remaining: " << number_of_words_remaining << endl;
         }
         cout << "Number of guesses remaining: " << guesses << endl;
+        print_letters_guessed(letters_guessed);
         cout << "Current word: " << current_word << endl;
-        if (current_word.find('_') == string::npos) {
+        if (current_word.find('*') == string::npos) {
             cout << "You won!!\n" << "Word was: " << current_word << endl;
-            break;
+            play_again = get_play_again();
         } else if (guesses > 0) {
             char next_letter = get_next_letter();
+            letters_guessed.push_back(next_letter);
             vector<int> postions;
             tie(list_of_words, postions) = process_next_letter(next_letter, list_of_words, word_length);
             current_word = change_word(current_word, postions, next_letter);
         } else {
             current_word = list_of_words[0];
             cout << "You failed\n" << "Word was: " << current_word << endl;
-            break;
+            play_again = get_play_again();
         }
 
         guesses--;

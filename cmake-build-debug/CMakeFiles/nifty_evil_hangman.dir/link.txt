@@ -1,0 +1,1 @@
+/usr/bin/g++  -g   CMakeFiles/nifty_evil_hangman.dir/main.cpp.o  -o nifty_evil_hangman 

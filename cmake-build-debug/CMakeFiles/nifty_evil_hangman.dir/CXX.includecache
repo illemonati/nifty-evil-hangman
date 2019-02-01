@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/root/test/c++/nifty-evil-hangman/main.cpp
+iostream
+-
+fstream
+-
+vector
+-
+unordered_map
+-
+

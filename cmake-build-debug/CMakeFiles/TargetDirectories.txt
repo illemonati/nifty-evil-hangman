@@ -1,0 +1,3 @@
+/root/test/c++/nifty-evil-hangman/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/root/test/c++/nifty-evil-hangman/cmake-build-debug/CMakeFiles/nifty_evil_hangman.dir
+/root/test/c++/nifty-evil-hangman/cmake-build-debug/CMakeFiles/edit_cache.dir

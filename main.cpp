@@ -70,7 +70,7 @@ vector<string> get_words_from_txt(unsigned int length = 0) {
     return lines;
 }
 
-char get_next_letter() {
+char get_next_letter(vector <char> letters_used, unsigned int guess) {
     while (true) {
         char temp;
         cout << "Please enter the next letter: " << endl;
@@ -78,10 +78,16 @@ char get_next_letter() {
         if (!isalpha(temp)) {
             cout << "That is not a valid input, please try again!" << endl;
         } else {
+            for(char l : letters_used) {
+                if (l == temp) {
+                    cout << "That letter is already used! Try another one!" << endl;
+                }
+            }
             return temp;
         }
     }
 }
+
 
 tuple<vector<string>, vector<int>> process_next_letter(char letter, vector<string> list_of_words, unsigned int word_length) {
     vector<string> new_list;
@@ -198,6 +204,7 @@ int main() {
 
     vector <char> letters_guessed;
     while (play_again) {
+        cout << "-------------------" << endl;
         if (total_number_of_words_remaining_on) {
             unsigned long number_of_words_remaining = list_of_words.size();
             cout << "Number of words remaining: " << number_of_words_remaining << endl;
@@ -208,8 +215,11 @@ int main() {
         if (current_word.find('*') == string::npos) {
             cout << "You won!!\n" << "Word was: " << current_word << endl;
             play_again = get_play_again();
+            if (play_again) {
+                main();
+            }
         } else if (guesses > 0) {
-            char next_letter = get_next_letter();
+            char next_letter = get_next_letter(letters_guessed, guesses);
             letters_guessed.push_back(next_letter);
             vector<int> postions;
             tie(list_of_words, postions) = process_next_letter(next_letter, list_of_words, word_length);
@@ -218,8 +228,11 @@ int main() {
             current_word = list_of_words[0];
             cout << "You failed\n" << "Word was: " << current_word << endl;
             play_again = get_play_again();
+            if (play_again){
+                main();
+            }
         }
-
+        cout << "------------------" << endl;
         guesses--;
     }
 }
